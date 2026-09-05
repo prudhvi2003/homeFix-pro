@@ -1,0 +1,13 @@
+# Java
+target/
+*.class
+.mvn/
+.idea/
+
+# React
+node_modules/
+dist/
+.env
+
+# App Specific
+backend/uploads/
