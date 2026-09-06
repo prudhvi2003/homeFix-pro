@@ -28,6 +28,9 @@ public class GlobalExceptionHandler {
     // Catch "General" Runtime Errors (500 Internal Server Error)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        // ADD THIS LINE so we can see the error in IntelliJ
+        ex.printStackTrace();
+
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

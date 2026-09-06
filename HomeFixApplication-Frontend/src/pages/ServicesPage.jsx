@@ -75,9 +75,10 @@ function ServicesPage() {
                 {services.map(service => (
                     <div key={service.id} className="card">
                         <img 
-                            src={service.imageUrl       
-                                ? `http://localhost:8080${service.imageUrl}` 
-                                : '/no-image.png'} 
+                            // If it starts with http, use it directly. Otherwise, it's an old local path.
+                            src={service.imageUrl?.startsWith('http') 
+                                ? service.imageUrl 
+                                : `http://localhost:8080${service.imageUrl}`} 
                             alt={service.name} 
                             style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }} 
                         />
