@@ -1,80 +1,64 @@
 import axios from 'axios';
 
-// This checks if there is a production URL, otherwise uses localhost
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+// 1. Get the URL from Vercel environment variables
+const API_URL = import.meta.env.VITE_API_URL;
 
-const axiosInstance = axios.create({
+console.log("api.js initialized. Target Backend:", API_URL);
+
+// 2. Create the instance with the Base URL
+const api = axios.create({
     baseURL: API_URL
 });
 
-console.log("api.js loaded");
-
 export const getAllServices = async (search = '', category = '') => {
-    // This creates a URL like: /api/services?search=ac&category=Repairs
-    const response = await axiosInstance.get(`${API_URL}/services`, {
+    // We only need '/services' because the base URL is already attached
+    const response = await api.get('/services', {
         params: { search, category }
     });
     return response.data;
 };
 
 export const login = async (credentials) => {
-    try {
-        const response = await axiosInstance.post(`${API_URL}/auth/login`, credentials);
-        return response.data; // This returns { token: "...", user: {...} }
-    } catch (error) {
-        console.error("Login error:", error);
-        throw error;
-    }
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
+};
+
+export const register = async (userData) => {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
 };
 
 export const createBooking = async (bookingData, email) => {
-    try {
-        // In Phase 15, we designed the backend to take email as a query parameter
-        const response = await axiosInstance.post(`${API_URL}/bookings?email=${email}`, bookingData);
-        return response.data;
-    } catch (error) {
-        console.error("Booking error:", error);
-        throw error;
-    }
+    const response = await api.post(`/bookings?email=${email}`, bookingData);
+    return response.data;
 };
 
 export const getMyBookings = async (email) => {
-    try {
-        const response = await axiosInstance.get(`${API_URL}/bookings/my-bookings?email=${email}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching bookings:", error);
-        throw error;
-    }
+    const response = await api.get(`/bookings/my-bookings?email=${email}`);
+    return response.data;
 };
 
 export const getAllBookings = async () => {
-    const response = await axiosInstance.get(`${API_URL}/bookings/all`);
+    const response = await api.get('/bookings/all');
     return response.data;
 };
 
 export const updateBookingStatus = async (id, status) => {
-    const response = await axiosInstance.put(`${API_URL}/bookings/${id}/status?status=${status}`);
+    const response = await api.put(`/bookings/${id}/status?status=${status}`);
     return response.data;
 };
 
 export const deleteService = async (id) => {
-    await axiosInstance.delete(`${API_URL}/services/${id}`);
+    await api.delete(`/services/${id}`);
 };
 
 export const addService = async (formData) => {
-    // Note: formData here is a FormData object, not a simple object
-    const response = await axiosInstance.post(`${API_URL}/services`, formData, {
+    const response = await api.post('/services', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
 };
 
-export const register = async (userData) => {
-    const response = await axiosInstance.post(`${API_URL}/auth/register`, userData);
-    return response.data;
-};
-
 export const cancelBooking = async (id, email) => {
-    await axiosInstance.delete(`${API_URL}/bookings/${id}/cancel?email=${email}`);
+    await api.delete(`/bookings/${id}/cancel?email=${email}`);
 };
